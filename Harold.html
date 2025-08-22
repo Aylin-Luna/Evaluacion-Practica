@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Música • Vibes</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <meta name="description" content="Página de música con animaciones modernas y reproductor interactivo.">
+  <style>
+    :root{
+      --bg:#0f0f16;
+      --card:#111217dd;
+      --accent:#7c3aed;
+      --accent-2:#06b6d4;
+      --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(255,255,255,0.02);
+      --text: #e6eef8;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:var(--text);background:radial-gradient(1200px 800px at 10% 10%, rgba(124,58,237,0.12), transparent 6%), radial-gradient(800px 500px at 90% 90%, rgba(6,182,212,0.06), transparent 8%), var(--bg);}
+    .container{max-width:1100px;margin:40px auto;padding:28px}
+
+    /* Header */
+    header{display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo .brand{font-family:Montserrat,Inter;font-weight:800;letter-spacing:0.6px;font-size:20px}
+    .nav{display:flex;gap:12px}
+    .nav button{background:transparent;border:1px solid var(--glass);padding:8px 12px;border-radius:12px;color:var(--text);cursor:pointer;backdrop-filter: blur(6px);}
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:24px;margin-top:28px}
+
+    /* Left hero */
+    .hero-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:18px;padding:28px;box-shadow:0 8px 40px rgba(2,6,23,0.6);border:1px solid var(--glass);}
+    .hero-card h1{font-family:Montserrat;font-weight:700;margin:0 0 8px;font-size:34px}
+    .hero-card p{opacity:0.85;line-height:1.5}
+    .cta-row{display:flex;gap:12px;margin-top:18px}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));padding:12px 16px;border-radius:12px;border:none;color:white;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,0.18);}
+    .btn-ghost{background:transparent;border:1px solid var(--glass);padding:12px 16px;border-radius:12px;color:var(--text);cursor:pointer}
+
+    /* Animated equalizer */
+    .eq{display:flex;align-items:end;gap:6px;margin-top:18px;height:60px}
+    .bar{width:10px;background:linear-gradient(180deg,var(--accent),var(--accent-2));border-radius:6px;animation:beat 1000ms infinite ease-in-out;opacity:0.95}
+    .bar:nth-child(2){animation-duration:850ms}
+    .bar:nth-child(3){animation-duration:1100ms}
+    .bar:nth-child(4){animation-duration:700ms}
+    .bar:nth-child(5){animation-duration:950ms}
+    @keyframes beat{0%{height:12px}50%{height:60px}100%{height:12px}}
+
+    /* Right: Player card */
+    .player{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border-radius:18px;padding:18px;border:1px solid var(--glass);display:flex;flex-direction:column;gap:14px}
+    .cover{height:220px;border-radius:12px;overflow:hidden;background-size:cover;background-position:center;box-shadow:0 10px 30px rgba(2,6,23,0.6);position:relative}
+    .cover::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.35));}
+    .track-title{display:flex;justify-content:space-between;align-items:center}
+    .track-title h3{margin:0;font-size:18px}
+    .controls{display:flex;align-items:center;gap:12px}
+    .big-btn{width:56px;height:56px;border-radius:50%;border:none;background:linear-gradient(180deg,#fff2 0,#fff0 60%);display:grid;place-items:center;cursor:pointer;backdrop-filter: blur(6px)}
+
+    /* Playlist */
+    .playlist{margin-top:18px;display:grid;gap:10px}
+    .track{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;background:var(--glass-2);cursor:pointer;border:1px solid rgba(255,255,255,0.02);transition:transform .18s ease,box-shadow .18s}
+    .track:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(2,6,23,0.55)}
+    .track small{opacity:0.7}
+
+    /* Footer waveform */
+    .wave{width:100%;height:120px;margin-top:28px;overflow:hidden;border-radius:12px;background:linear-gradient(90deg, rgba(124,58,237,0.06), rgba(6,182,212,0.03))}
+    .wave svg{display:block;width:100%;height:100%}
+
+    /* Floating images */
+    .floating-imgs{position:fixed;right:24px;bottom:24px;display:flex;flex-direction:column;gap:12px}
+    .float{width:88px;height:88px;border-radius:12px;background-size:cover;background-position:center;box-shadow:0 8px 30px rgba(2,6,23,0.6);transform:translateY(0);animation:float 4000ms ease-in-out infinite}
+    .float:nth-child(2){animation-delay:600ms}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+
+    /* Responsive */
+    @media(max-width:980px){.hero{grid-template-columns:1fr}.floating-imgs{display:none}.container{padding:18px}}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="6" fill="url(#g)"/><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs></svg>
+        <div>
+          <div class="brand">Vibes</div>
+          <div style="font-size:12px;opacity:0.7">beats • playlists • mood</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button>Explorar</button>
+        <button>Playlists</button>
+        <button>Mi música</button>
+      </nav>
+    </header>
+
+    <main class="hero">
+      <section class="hero-card">
+        <h1>Sube el volumen — siente el vibe</h1>
+        <p>Colección curada de beats, paisajes sonoros y pistas para concentrarte, estudiar o simplemente bailar. Interacciones suaves y visuales que responden a la música.</p>
+
+        <div class="eq" aria-hidden="true">
+          <div class="bar" style="height:38px"></div>
+          <div class="bar" style="height:16px"></div>
+          <div class="bar" style="height:28px"></div>
+          <div class="bar" style="height:22px"></div>
+          <div class="bar" style="height:46px"></div>
+        </div>
+
+        <div class="cta-row">
+          <button class="btn-primary" id="playAll">Reproducir todo</button>
+          <button class="btn-ghost" id="shuffle">Shuffle</button>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:12px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:12px;background-image:url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=60');background-size:cover"></div>
+          <div>
+            <div style="font-weight:700">Top Weekly</div>
+            <small style="opacity:0.8">Actualizado hace 3 días</small>
+          </div>
+        </div>
+      </section>
+
+      <aside class="player">
+        <div class="cover" id="cover" style="background-image:url('https://images.unsplash.com/photo-1519885271750-3c9a3e4f0f2f?auto=format&fit=crop&w=1200&q=80')"></div>
+        <div class="track-title">
+          <div>
+            <h3 id="title">Nombre de la pista</h3>
+            <small id="artist">Artista - Álbum</small>
+          </div>
+          <div style="opacity:0.9">3:18</div>
+        </div>
+
+        <div style="display:flex;justify-content:center" class="controls">
+          <button id="prev" class="big-btn" title="Anterior">◀</button>
+          <button id="play" class="big-btn" title="Play">▶</button>
+          <button id="next" class="big-btn" title="Siguiente">▶▶</button>
+        </div>
+
+        <input type="range" id="seek" min="0" max="100" value="0" style="width:100%">
+
+        <div class="playlist" id="playlist">
+          <!-- pistas generadas por JS -->
+        </div>
+      </aside>
+
+      <div class="wave" aria-hidden="true">
+        <!-- SVG Waveform decorativo -->
+        <svg viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 120 C 150 200 350 40 600 120 C 850 200 1050 40 1200 120 L1200 200 L0 200 Z" fill="rgba(124,58,237,0.12)"></path>
+        </svg>
+      </div>
+
+    </main>
+
+    <div class="floating-imgs" aria-hidden="true">
+      <div class="float" style="background-image:url('https://images.unsplash.com/photo-1506152983157-1f1f2d7f0d6b?auto=format&fit=crop&w=800&q=60')"></div>
+      <div class="float" style="background-image:url('https://images.unsplash.com/photo-1524901547707-8a06f9a2a1bf?auto=format&fit=crop&w=800&q=60')"></div>
+    </div>
+
+  </div>
+
+  <audio id="audio" crossorigin="anonymous"></audio>
+
+  <script>
+    // Demo playlist (pistas libres de ejemplo desde archivos públicos o placeholders)
+    const tracks = [
+      {title:'City Lights', artist:'Neon Beats', src:'https://cdn.pixabay.com/download/audio/2022/03/15/audio_3c4b9e0e9d.mp3?filename=chill-ambient-11052.mp3', cover:'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80'},
+      {title:'Late Night Drive', artist:'Moonfall', src:'https://cdn.pixabay.com/download/audio/2021/10/09/audio_2ecb4f3c09.mp3?filename=ambient-11451.mp3', cover:'https://images.unsplash.com/photo-1505765056524-0b97e5d1d3f7?auto=format&fit=crop&w=1200&q=80'},
+      {title:'Ocean Breath', artist:'AquaTone', src:'https://cdn.pixabay.com/download/audio/2022/02/13/audio_8b3c6d5325.mp3?filename=smooth-chill-loop-11104.mp3', cover:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80'}
+    ];
+
+    const audio = document.getElementById('audio');
+    const title = document.getElementById('title');
+    const artist = document.getElementById('artist');
+    const cover = document.getElementById('cover');
+    const playBtn = document.getElementById('play');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const playlistEl = document.getElementById('playlist');
+    const seek = document.getElementById('seek');
+    let idx = 0;
+
+    function loadTrack(i){
+      const t = tracks[i];
+      audio.src = t.src;
+      title.textContent = t.title;
+      artist.textContent = t.artist;
+      cover.style.backgroundImage = `url('${t.cover}')`;
+      // set duration placeholder until metadata loads
+    }
+
+    function renderPlaylist(){
+      playlistEl.innerHTML = '';
+      tracks.forEach((t,i)=>{
+        const el = document.createElement('div');
+        el.className='track';
+        el.innerHTML = `
+          <div style="width:56px;height:56px;border-radius:8px;background-image:url('${t.cover}');background-size:cover"></div>
+          <div style="flex:1">
+            <div style="font-weight:700">${t.title}</div>
+            <small>${t.artist}</small>
+          </div>
+          <div style="opacity:0.8">▶</div>
+        `;
+        el.addEventListener('click',()=>{ idx=i; play(); });
+        playlistEl.appendChild(el);
+      });
+    }
+
+    function play(){
+      if(audio.src==='' ) loadTrack(idx);
+      if(audio.paused){ audio.play(); playBtn.textContent='▌▌'; } else { audio.pause(); playBtn.textContent='▶'; }
+    }
+
+    playBtn.addEventListener('click', ()=>{ play(); });
+    prevBtn.addEventListener('click', ()=>{ idx = (idx-1+tracks.length)%tracks.length; loadTrack(idx); audio.play(); playBtn.textContent='▌▌'; });
+    nextBtn.addEventListener('click', ()=>{ idx = (idx+1)%tracks.length; loadTrack(idx); audio.play(); playBtn.textContent='▌▌'; });
+
+    audio.addEventListener('timeupdate', ()=>{
+      if(audio.duration){ seek.value = (audio.currentTime/audio.duration)*100; }
+    });
+    seek.addEventListener('input', ()=>{
+      if(audio.duration) audio.currentTime = (seek.value/100)*audio.duration;
+    });
+    audio.addEventListener('ended', ()=>{ idx = (idx+1)%tracks.length; loadTrack(idx); audio.play(); });
+
+    // Play all / Shuffle
+    document.getElementById('playAll').addEventListener('click', ()=>{ idx=0; loadTrack(idx); audio.play(); playBtn.textContent='▌▌'; });
+    document.getElementById('shuffle').addEventListener('click', ()=>{ idx = Math.floor(Math.random()*tracks.length); loadTrack(idx); audio.play(); playBtn.textContent='▌▌'; });
+
+    // Initialize
+    renderPlaylist(); loadTrack(0);
+
+    // Small visualizer: animate eq bars based on audio (approximation using timeupdates)
+    const bars = document.querySelectorAll('.bar');
+    function pulse(){
+      const r = audio.paused ? 0.12 : 1;
+      bars.forEach((b,i)=>{
+        const h = 12 + Math.abs(Math.sin((Date.now()/200)+(i*0.7)))* (40 + i*8) * r;
+        b.style.height = h+'px';
+      });
+      requestAnimationFrame(pulse);
+    }
+    requestAnimationFrame(pulse);
+
+    // Hint: si pruebas localmente y los audios no cargan por CORS, usa Live Server o sube el HTML a un host.
+  </script>
+</body>
+</html>
